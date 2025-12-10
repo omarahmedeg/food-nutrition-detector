@@ -18,24 +18,43 @@ CORS(app)  # Enable CORS for Next.js
 
 # Global variable for model
 model = None
-MODEL_PATH = os.path.join(os.path.dirname(__file__), 'saved_models', 'food101_classifier.pth')
+
+# Try multiple possible model paths
+POSSIBLE_MODEL_PATHS = [
+    os.path.join(os.path.dirname(__file__), 'saved_models', 'food101_classifier.pth'),
+    os.path.join(os.path.dirname(__file__), 'saved_models', 'fast_food_classifier.pth'),
+    '/workspace/saved_models/fast_food_classifier.pth',
+    '/workspace/ml-model/saved_models/food101_classifier.pth'
+]
 
 def load_model():
     """Load the trained PyTorch model"""
     global model
+    
+    # Try to find the model file
+    MODEL_PATH = None
+    for path in POSSIBLE_MODEL_PATHS:
+        if os.path.exists(path):
+            MODEL_PATH = path
+            break
+    
     try:
-        if os.path.exists(MODEL_PATH):
+        if MODEL_PATH:
             model = FastFoodClassifier(MODEL_PATH, num_classes=101)
             print("✓ PyTorch model loaded successfully!")
             print(f"✓ Model path: {MODEL_PATH}")
             print(f"✓ Number of classes: {len(model.class_names)}")
             return True
         else:
-            print(f"⚠️  Model not found at {MODEL_PATH}")
-            print("Please ensure food101_classifier.pth is in the saved_models directory")
+            print(f"⚠️  Model not found in any of these locations:")
+            for path in POSSIBLE_MODEL_PATHS:
+                print(f"   - {path}")
+            print("⚠️  Starting server without model (health check will work)")
             return False
     except Exception as e:
         print(f"❌ Error loading model: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return False
 
 @app.route('/api/health', methods=['GET'])
@@ -106,6 +125,8 @@ def predict():
         
     except Exception as e:
         print(f"Error during prediction: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({
             'error': str(e),
             'success': False
@@ -125,25 +146,36 @@ def get_classes():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/', methods=['GET'])
+def root():
+    """Root endpoint"""
+    return jsonify({
+        'service': 'Food Nutrition Detector API',
+        'status': 'running',
+        'model_loaded': model is not None,
+        'endpoints': {
+            'health': '/api/health',
+            'predict': '/api/predict',
+            'classes': '/api/classes'
+        }
+    })
+
 if __name__ == '__main__':
     print("=" * 70)
     print("FOOD NUTRITION DETECTOR API SERVER")
     print("=" * 70)
     
-    # Load model
+    # Load model (but don't fail if it's not available)
     print("\nLoading model...")
-    if load_model():
-        print(f"✓ Model ready with {len(model.class_names)} classes")
-        print(f"✓ Classes: {', '.join(model.class_names[:5])}...")
-        
-        print("\n" + "=" * 70)
-        print("Starting Flask server...")
-        print("API will be available at: http://localhost:5000")
-        print("=" * 70 + "\n")
-        
-        app.run(host='0.0.0.0', port=5000, debug=True)
-    else:
-        print("\n❌ Cannot start server without model.")
-        print("\nPlease train the model first:")
-        print("  cd ml-model")
-        print("  python train.py")
+    load_model()
+    
+    # Get port from environment variable (Cloud Run provides this)
+    port = int(os.environ.get('PORT', 8080))
+    
+    print("\n" + "=" * 70)
+    print("Starting Flask server...")
+    print(f"API will be available on port: {port}")
+    print("=" * 70 + "\n")
+    
+    # Start server (no debug mode in production)
+    app.run(host='0.0.0.0', port=port, debug=False)
