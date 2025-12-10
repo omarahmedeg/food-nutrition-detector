@@ -586,10 +586,10 @@ def predict():
     create_content_slide(prs, "Running the Project", [
         "Prerequisites: Python 3.8+, Node.js 16+",
         "Backend setup:",
-        "  cd ml-model && pip install -r requirements.txt",
+        "  pip install -r ml-model/requirements.txt",
         "  python api_server.py  # Runs on http://localhost:5000",
         "Frontend setup:",
-        "  cd web-app && npm install && npm run dev",
+        "  npm install && npm run dev",
         "Model file: Place food101_classifier.pth in ml-model/saved_models/",
         "Full setup time: ~5 minutes"
     ])
@@ -657,12 +657,12 @@ def predict():
     # Slide 22: Code Repository
     create_content_slide(prs, "Project Structure", [
         "Repository: food-nutrition-detector/",
+        "  api_server.py - Flask REST API (main entry point)",
         "  ml-model/",
         "    • pytorch_model.py - Model loader & predictor",
-        "    • api_server.py - Flask REST API",
         "    • nutrition_data_food101.py - Nutrition mappings",
         "    • saved_models/ - Model checkpoints",
-        "  web-app/ - Next.js frontend",
+        "  Frontend files - Next.js/React components",
         "  generate_presentation.py - This presentation generator!",
         "Documentation: README.md with full setup instructions"
     ])

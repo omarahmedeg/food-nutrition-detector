@@ -1,0 +1,50 @@
+# This file specifies files that are _not_ uploaded to Google Cloud
+
+# using gcloud. It follows the same syntax as .gitignore.
+
+.git
+.gitignore
+
+# Python
+
+**pycache**/
+_.py[cod]
+_$py.class
+\*.so
+.Python
+env/
+venv/
+.venv/
+
+# IDE
+
+.vscode/
+.idea/
+\*.swp
+
+# OS
+
+.DS_Store
+Thumbs.db
+
+# Documentation
+
+\*.md
+docs/
+
+# Node modules
+
+node_modules/
+
+# Training data
+
+ml-model/data/train/
+ml-model/data/validation/
+ml-model/data/test/
+
+# Build files
+
+start.bat
+generate_presentation.py
+MIGRATION_SUMMARY.md
+CLOUD_RUN_DEPLOYMENT.md
