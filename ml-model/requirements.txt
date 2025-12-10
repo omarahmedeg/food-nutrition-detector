@@ -1,0 +1,7 @@
+# Core dependencies for Food-101 classifier API
+torch>=2.0.0
+torchvision>=0.15.0
+flask>=2.3.0
+flask-cors>=4.0.0
+Pillow>=10.0.0
+numpy>=1.24.3

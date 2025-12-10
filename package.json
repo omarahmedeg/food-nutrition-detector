@@ -1,0 +1,23 @@
+{
+  "name": "food-nutrition-detector",
+  "version": "1.0.0",
+  "description": "AI-powered food classification and nutrition detection system",
+  "keywords": [
+    "machine-learning",
+    "tensorflow",
+    "food-classification",
+    "nutrition",
+    "nextjs",
+    "cnn",
+    "computer-vision"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "scripts": {
+    "start": "start.bat"
+  }
+}
